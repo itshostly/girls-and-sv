@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>Girls& Panel</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232E282A'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3EG%26%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="brand/favicon-64.png">
+<link rel="apple-touch-icon" href="brand/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: operations panel — meetup picker on top, money/seat summary, then the guest list with one-tap WhatsApp actions. */
 :root{
-  --matcha:#CFE1B9; --matcha-ink:#4F6B35; --strawberry:#F7D6DE; --rose:#C8637A; --rose-ink:#A84860;
+  --matcha:#CFE1B9; --matcha-ink:#4F6B35; --strawberry:#F7D6DE; --rose:#B66A52; --rose-ink:#94513C;
   --butter:#FFF4D6; --butter-ink:#7A5A1E; --terracotta:#C85A3F; --espresso:#2E282A; --muted:#6E6266;
   --line:#EADFDC; --bg:#F7F2EF; --surface:#fff; --sky:#DCEBF2; --sky-ink:#3C6A80;
   --display:"Fraunces", Georgia, serif; --body:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -40,6 +41,8 @@ header{background:var(--espresso);color:#fff}
 header .wrap{display:flex;align-items:center;gap:14px;height:62px}
 header h1{font-size:20px}
 header h1 em{color:var(--strawberry);font-style:normal}
+header h1.hl{display:flex;align-items:flex-end;font-weight:600;font-size:22px}
+header h1.hl img{height:28px;width:auto;margin:0 0 -2px 1px}
 header .tagp{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#C9BDB9;border:1px solid #5a5052;border-radius:999px;padding:4px 10px}
 header .sp{flex:1}
 header .who{font-size:13px;color:#C9BDB9}
@@ -95,7 +98,7 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1>Girls<em>&amp;</em></h1><span class="tagp">Panel de reservas</span><span class="sp"></span><span class="who" id="who"></span><button class="btn btn-sm" id="logout" hidden>Salir</button></div></header>
+<header><div class="wrap"><h1 class="hl">girls<img src="brand/mark.png" alt="&amp;" width="205" height="236"></h1><span class="tagp">Panel de reservas</span><span class="sp"></span><span class="who" id="who"></span><button class="btn btn-sm" id="logout" hidden>Salir</button></div></header>
 
 <div class="wrap">
   <form class="login" id="login" hidden>
