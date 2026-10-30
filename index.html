@@ -99,7 +99,10 @@ header.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--b
 .input:focus{outline:none;border-color:var(--rose);background:#fff}
 .phone{display:flex;align-items:center;border:1.5px solid var(--line);background:#FDFBFA;border-radius:14px}
 .phone:focus-within{border-color:var(--rose);background:#fff}
-.phone span{padding:0 4px 0 14px;font-weight:600;color:var(--muted)}
+.phone .cc{display:flex;align-items:center;padding-left:14px;font-weight:600;color:var(--muted);border-right:1.5px solid var(--line)}
+.phone .cc input{width:3.6em;padding:13px 8px 13px 2px;font-weight:600;color:var(--espresso)}
+.phone .cc{flex:none}.phone .cc input{flex:none}
+#f-phone{width:0}
 .phone input{border:0;background:transparent;padding:13px 14px 13px 6px;flex:1;min-width:0;font-size:16px;outline:none}
 .note{display:flex;gap:10px;background:var(--butter);border-radius:14px;padding:12px 14px;font-size:13px;color:#7A5A1E;margin:4px 0 18px}
 .err{color:var(--terracotta);font-size:14px;font-weight:600;margin:-4px 0 12px}
@@ -238,7 +241,7 @@ footer small{color:#B9ADA9}
         </div>
         <div class="field">
           <label for="f-phone" data-i18n="lblPhone">Tu WhatsApp</label>
-          <div class="phone"><span>+503</span><input id="f-phone" name="phone" inputmode="numeric" autocomplete="tel-national" placeholder="7000 0000" maxlength="9" required></div>
+          <div class="phone"><label class="cc" for="f-cc">+<input id="f-cc" name="cc" inputmode="numeric" autocomplete="tel-country-code" value="503" maxlength="4" data-i18n-aria="ccAria" aria-label="Código de país"></label><input id="f-phone" name="phone" inputmode="numeric" autocomplete="tel-national" placeholder="7000 0000" maxlength="16" required></div>
         </div>
         <div class="field">
           <label for="f-meetup" data-i18n="lblMeetup">¿A cuál salida querés ir?</label>
@@ -391,7 +394,7 @@ es: {
   empty:"Estamos armando las próximas fechas. Anotate en el formulario y te avisamos primero.",
   reserve:"Reservar", waitlist:"Lista de espera", waitTag:" (lista de espera)", pickDate:"Escogé una fecha…", noDate:"Ninguna fecha me queda, avísenme de las próximas",
   banner:(t,z,d,few)=>`Próxima salida: <b>${t} en ${z}</b>, ${d}${few?` · solo ${few} cupos`:''}`, bannerCta:"Reservar →",
-  errName:"Escribí tu nombre para saber cómo llamarte.", errPhone:"Revisá tu WhatsApp: son 8 dígitos y empieza con 6 o 7.", errMeetup:"Escogé a cuál salida querés ir.",
+  errName:"Escribí tu nombre para saber cómo llamarte.", errPhone:"Revisá tu WhatsApp: son 8 dígitos y empieza con 6 o 7.", errPhoneIntl:"Revisá el código de país y tu número de WhatsApp.", ccAria:"Código de país", errMeetup:"Escogé a cuál salida querés ir.",
   sending:"Reservando…", errClosed:"Esa salida ya cerró. Escogé otra fecha.", errMany:"Ya hiciste varias reservas hoy con este número. Escribinos por WhatsApp y te ayudamos.",
   errWa:"Revisá tu número de WhatsApp.", errNet:"No se pudo guardar tu reserva. Revisá tu conexión e intentá de nuevo.",
   msgPaid:(n,t,d,c,p)=>`¡Hola! Soy ${n}. Reservé ${t} (${d}). Mi código es ${c}. Te mando el comprobante de los $${p} 💸`,
@@ -446,7 +449,7 @@ en: {
   empty:"We're planning the next dates. Sign up with the form and you'll hear first.",
   reserve:"Book", waitlist:"Join waitlist", waitTag:" (waitlist)", pickDate:"Pick a date…", noDate:"None of these dates work, tell me about the next ones",
   banner:(t,z,d,few)=>`Next meetup: <b>${t} in ${z}</b>, ${d}${few?` · only ${few} spots left`:''}`, bannerCta:"Book →",
-  errName:"Add your name so we know what to call you.", errPhone:"Check your WhatsApp: it's 8 digits and starts with 6 or 7.", errMeetup:"Pick which meetup you want to join.",
+  errName:"Add your name so we know what to call you.", errPhone:"Check your WhatsApp: Salvadoran numbers are 8 digits and start with 6 or 7.", errPhoneIntl:"Check the country code and your WhatsApp number.", ccAria:"Country code", errMeetup:"Pick which meetup you want to join.",
   sending:"Booking…", errClosed:"That meetup is closed. Pick another date.", errMany:"You've already made several bookings today with this number. Message us on WhatsApp and we'll help.",
   errWa:"Check your WhatsApp number.", errNet:"Your booking couldn't be saved. Check your connection and try again.",
   msgPaid:(n,t,d,c,p)=>`Hi! I'm ${n}. I booked ${t} (${d}). My code is ${c}. Here's my receipt for the $${p} 💸`,
@@ -573,7 +576,10 @@ document.addEventListener("click", e => {
   setTimeout(()=>$("#f-name").focus({preventScroll:true}), 400);
 });
 
+const cc = () => $("#f-cc").value.replace(/\D/g,"");
+$("#f-cc").addEventListener("input", e => { e.target.value = e.target.value.replace(/\D/g,"").slice(0,4); $("#f-phone").placeholder = cc() === "503" ? "7000 0000" : ""; });
 $("#f-phone").addEventListener("input", e => {
+  if (cc() !== "503") { e.target.value = e.target.value.replace(/[^\d ]/g,"").slice(0,16); return; }
   const d = e.target.value.replace(/\D/g,"").slice(0,8);
   e.target.value = d.length > 4 ? d.slice(0,4) + " " + d.slice(4) : d;
 });
@@ -583,10 +589,11 @@ function showErr(msg){ const el=$("#err"); el.textContent=msg; el.hidden=!msg; }
 $("#form").addEventListener("submit", async e => {
   e.preventDefault(); showErr("");
   const name = $("#f-name").value.trim();
-  const phone = $("#f-phone").value.replace(/\D/g,"");
+  const local = $("#f-phone").value.replace(/\D/g,""), code = cc();
+  const phone = code + local;
   const mv = $("#f-meetup").value;
   if (name.length < 2) return showErr(t("errName"));
-  if (!/^[267]\d{7}$/.test(phone)) return showErr(t("errPhone"));
+  if (code === "503" ? !/^[267]\d{7}$/.test(local) : (!/^[1-9]\d{0,3}$/.test(code) || !/^[1-9]\d{7,14}$/.test(phone))) return showErr(t(code === "503" ? "errPhone" : "errPhoneIntl"));
   if (!mv) return showErr(t("errMeetup"));
   const btn = $("#submit"); btn.disabled = true; btn.textContent = t("sending");
   const { data, error } = await sb.rpc("reserve", { p_meetup_id: mv === "none" ? null : mv, p_name: name, p_whatsapp: phone, p_theme: mv === "none" ? $("#f-theme").value : null, p_lang: LANG });
