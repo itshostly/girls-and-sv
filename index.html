@@ -135,6 +135,7 @@ header.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--b
 .t-ceramics{background:var(--clay);color:#6B4A3E}
 .t-beach{background:var(--sky);color:var(--sky-ink)}
 .t-coffee{background:#EDE3DA;color:#6B4A3E}
+.t-walk{background:#E4ECD9;color:#4F6B35}
 .t-other{background:var(--clay);color:var(--espresso)}
 
 /* Sections */
@@ -266,6 +267,7 @@ footer small{color:#B9ADA9}
             <option value="ceramics">Girls&amp;ceramics</option>
             <option value="beach">Girls&amp;beach</option>
             <option value="coffee">Girls&amp;coffee</option>
+            <option value="walk">Girls&amp;walks</option>
           </select>
         </div>
         <div class="note" id="note">Los $5 se pagan por transferencia después de reservar. Te guardamos el lugar 24 horas mientras nos mandás el comprobante.</div>
@@ -289,6 +291,7 @@ footer small{color:#B9ADA9}
       <li class="tag t-ceramics">Girls&amp;ceramics</li>
       <li class="tag t-beach">Girls&amp;beach</li>
       <li class="tag t-coffee">Girls&amp;coffee</li>
+      <li class="tag t-walk">Girls&amp;walks</li>
     </ul>
   </div>
 </section>
@@ -492,7 +495,7 @@ let LANG = pickLang();
 const t = k => T[LANG][k];
 
 const TZ = "America/El_Salvador";
-const THEME = { matcha:"Girls&matcha", views:"Girls&views", books:"Girls&books", ceramics:"Girls&ceramics", beach:"Girls&beach", coffee:"Girls&coffee", other:"Girls&" };
+const THEME = { matcha:"Girls&matcha", views:"Girls&views", books:"Girls&books", ceramics:"Girls&ceramics", beach:"Girls&beach", coffee:"Girls&coffee", walk:"Girls&walks", other:"Girls&" };
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (iso, o) => new Intl.DateTimeFormat(LANG === "en" ? "en-US" : "es-SV", { timeZone: TZ, ...o }).format(new Date(iso));
