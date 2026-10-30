@@ -163,7 +163,7 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
       <form class="formcard" id="sform">
         <h3>Datos de pago y contacto</h3>
         <p class="small" style="margin:0">Esto es lo que ve cada chica al reservar. Cambia los valores de ejemplo antes de compartir el sitio.</p>
-        <label class="f">Tu WhatsApp (con 503, sin espacios)<input class="input" id="s-wa" inputmode="numeric" pattern="503[0-9]{8}" required></label>
+        <label class="f">Tu WhatsApp con código de país, sin + ni espacios (ej. España: 34612345678 · El Salvador: 50371234567)<input class="input" id="s-wa" inputmode="numeric" pattern="[1-9][0-9]{7,14}" required></label>
         <div class="grid2">
           <label class="f">Banco<input class="input" id="s-bank" required></label>
           <label class="f">Titular<input class="input" id="s-holder" required></label>
