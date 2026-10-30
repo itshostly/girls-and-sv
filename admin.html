@@ -296,10 +296,10 @@ function waMessages(r, m, first){
   if (!m) return { newDates: `¡Hola ${first}! 💕 Soy de Girls& El Salvador. Ya abrimos nuevas fechas: ${location.origin}${location.pathname.replace(/admin\.html$/,"")}#meetups ¿Te apartamos un lugar?` };
   const d = when(m.starts_at);
   return {
-    remind: `¡Hola ${first}! 💕 Te escribo de Girls& por tu reserva para ${m.title} (${d}). Tu código es ${r.code}. Para confirmar tu lugar solo falta la transferencia de $${Number(m.price).toFixed(0)}: ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} a nombre de ${settings.account_holder}. Me mandas el comprobante por aquí y listo.`,
-    confirm: `¡${first}, tu lugar está confirmado! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nLlega con 10 minutos de anticipación y pregunta por la mesa de Girls&. Cada quien paga lo que consume. Si no puedes llegar, avísame con 48 horas y pasamos tus $5 a otra fecha. ¡Nos vemos! 💕`,
-    dayBefore: `¡Hola ${first}! Mañana es ${m.title} 💕\n📅 ${d}\n📍 ${m.venue_private || m.zone}\nTe espero. Si al final no puedes, avísame hoy para darle tu lugar a alguien de la lista de espera.`,
-    spot: `¡Hola ${first}! 💕 Se liberó un cupo para ${m.title} (${d}). ¿Lo quieres? Si sí, transfiere $${Number(m.price).toFixed(0)} a ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} (${settings.account_holder}), con tu código ${r.code}, y me mandas el comprobante. Te lo guardo 24 horas.`
+    remind: `¡Hola ${first}! 💕 Te escribo de Girls& por tu reserva para ${m.title} (${d}). Tu código es ${r.code}. Para confirmar tu lugar solo falta la transferencia de $${Number(m.price).toFixed(0)}: ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} a nombre de ${settings.account_holder}. Me mandás el comprobante por aquí y listo.`,
+    confirm: `¡${first}, tu lugar está confirmado! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nLlegá con 10 minutos de anticipación y preguntá por la mesa de Girls&. Cada quien paga lo que consume. Si no podés llegar, avisame con 48 horas y pasamos tus $5 a otra fecha. ¡Nos vemos! 💕`,
+    dayBefore: `¡Hola ${first}! Mañana es ${m.title} 💕\n📅 ${d}\n📍 ${m.venue_private || m.zone}\nTe espero. Si al final no podés, avisame hoy para darle tu lugar a alguien de la lista de espera.`,
+    spot: `¡Hola ${first}! 💕 Se liberó un cupo para ${m.title} (${d}). ¿Lo querés? Si sí, transferí $${Number(m.price).toFixed(0)} a ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} (${settings.account_holder}), con tu código ${r.code}, y me mandás el comprobante. Te lo guardo 24 horas.`
   };
 }
 

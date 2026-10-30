@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Girls& El Salvador</title>
-<meta name="description" content="Encuentros relajados solo para mujeres en San Salvador, Santa Ana y La Libertad. Matcha, libros, playa, cerámica y café. Reserva tu lugar por $5.">
+<meta name="description" content="Salidas tranquilas solo para mujeres en San Salvador, Santa Ana y La Libertad. Matcha, libros, playa, cerámica y café. Apartá tu lugar por $5.">
 <meta property="og:title" content="Girls& El Salvador">
-<meta property="og:description" content="Amigas nuevas, cafés lentos y cero poses. Reserva tu lugar en el próximo círculo.">
+<meta property="og:description" content="Hacer amigas de adulta no es fácil. Apartá tu lugar en la próxima salida.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23C8637A'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3EG%26%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,10 +184,10 @@ footer small{color:#B9ADA9}
       <span><span class="logo-word">Girls<em>&amp;</em></span><span class="logo-sub">EL SALVADOR</span></span>
     </a>
     <nav class="nav-links" aria-label="Principal">
-      <a href="#vibe">El vibe</a>
-      <a href="#meetups">Próximos meetups</a>
+      <a href="#vibe">Cómo es</a>
+      <a href="#meetups">Próximas salidas</a>
       <a href="#faq">Preguntas</a>
-      <a class="btn btn-primary" href="#reservar">Unirme al círculo</a>
+      <a class="btn btn-primary" href="#reservar">Apartar mi lugar</a>
     </nav>
   </div>
 </header>
@@ -196,14 +196,14 @@ footer small{color:#B9ADA9}
 <section class="hero">
   <div class="wrap">
     <div>
-      <span class="eyebrow">100% women-only · San Salvador, Santa Ana y La Libertad</span>
-      <h1>Amigas nuevas, cafés lentos y <em>cero poses.</em></h1>
-      <p class="lede">Encuentros relajados para desconectar, hablar sin filtro, probar comida rica y quejarse a gusto. Sin citas, sin networking forzado: <b>planes a los que sí vas a querer ir.</b></p>
+      <span class="eyebrow">Solo para mujeres · San Salvador, Santa Ana y La Libertad</span>
+      <h1>Hacer amigas de adulta <em>no es fácil.</em></h1>
+      <p class="lede">Por eso armamos salidas tranquilas, en grupos pequeños, para conocer gente nueva sin presión: un matcha, una tarde en la playa, un taller de cerámica. <b>La mayoría llega sola.</b></p>
       <ul class="chips">
-        <li>La mayoría llega sola</li>
+        <li>Planes de día</li>
         <li>Solo mujeres</li>
         <li>Grupos de 10 a 14</li>
-        <li>$5 de reserva para evitar plantones</li>
+        <li>$5 para apartar tu lugar</li>
       </ul>
     </div>
 
@@ -212,13 +212,13 @@ footer small{color:#B9ADA9}
 
       <form id="form" novalidate>
         <div class="card-head">
-          <div><small>Reserva tu lugar</small><h2>Únete al próximo círculo</h2></div>
+          <div><small>Próximas salidas</small><h2>Apartá tu lugar</h2></div>
           <div class="price">$5</div>
         </div>
-        <p class="sub">Elige tu salida. Te escribimos por WhatsApp con el grupo y la ubicación exacta.</p>
+        <p class="sub">Escogé tu salida y te escribimos por WhatsApp con el grupo y la ubicación.</p>
 
         <div class="field">
-          <label for="f-name">¿Cómo te llamas?</label>
+          <label for="f-name">¿Cómo te llamás?</label>
           <input class="input" id="f-name" name="name" autocomplete="given-name" placeholder="Ej: Sofía Gómez" maxlength="80" required>
         </div>
         <div class="field">
@@ -226,13 +226,13 @@ footer small{color:#B9ADA9}
           <div class="phone"><span>+503</span><input id="f-phone" name="phone" inputmode="numeric" autocomplete="tel-national" placeholder="7000 0000" maxlength="9" required></div>
         </div>
         <div class="field">
-          <label for="f-meetup">¿A qué salida quieres ir?</label>
+          <label for="f-meetup">¿A cuál salida querés ir?</label>
           <select class="input" id="f-meetup" name="meetup" required>
             <option value="">Cargando fechas…</option>
           </select>
         </div>
         <div class="field" id="theme-field" hidden>
-          <label for="f-theme">¿Qué plan te vibra más?</label>
+          <label for="f-theme">¿Qué plan te gusta más?</label>
           <select class="input" id="f-theme" name="theme">
             <option value="">Cualquiera me sirve</option>
             <option value="matcha">Girls&amp;matcha</option>
@@ -243,10 +243,10 @@ footer small{color:#B9ADA9}
             <option value="coffee">Girls&amp;coffee</option>
           </select>
         </div>
-        <div class="note">Los $5 se pagan por transferencia después de reservar. Tu lugar queda apartado 24 horas mientras nos envías el comprobante.</div>
+        <div class="note">Los $5 se pagan por transferencia después de reservar. Te guardamos el lugar 24 horas mientras nos mandás el comprobante.</div>
         <p class="err" id="err" role="alert" hidden></p>
-        <button class="btn btn-primary" id="submit" type="submit">Reservar mi lugar</button>
-        <p class="fine">Solo usamos tu número para este grupo. Nada de spam.</p>
+        <button class="btn btn-primary" id="submit" type="submit">Apartar mi lugar</button>
+        <p class="fine">Tu número solo lo usamos para Girls&amp;.</p>
       </form>
 
       <div id="done" hidden aria-live="polite"></div>
@@ -256,7 +256,7 @@ footer small{color:#B9ADA9}
 
 <section class="themes" aria-label="Temáticas">
   <div class="wrap">
-    <p>Cualquier pretexto es bueno para juntarnos</p>
+    <p>Cualquier excusa es buena para juntarnos</p>
     <ul class="tags">
       <li class="tag t-matcha">Girls&amp;matcha</li>
       <li class="tag t-views">Girls&amp;views</li>
@@ -271,33 +271,33 @@ footer small{color:#B9ADA9}
 <section class="block why" id="vibe">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">Nuestra filosofía</span>
-      <h2>Por qué creamos este espacio</h2>
-      <p>Hacer amigas de adulta en El Salvador es difícil. Todas estamos ocupadas, los grupos del colegio ya cambiaron y salir a un bar a conocer gente muchas veces da pereza o incomodidad.</p>
+      <span class="eyebrow">Por qué existe</span>
+      <h2>Por qué armamos esto</h2>
+      <p>Entre el trabajo y todo lo demás, las amigas del colegio ya no son las mismas y salir a un bar a conocer gente da pereza. Queríamos una forma más tranquila de hacer amigas.</p>
     </div>
     <div class="pillars">
-      <div class="pillar"><div class="dot" style="background:var(--matcha)"></div><h3>Planes de día, con calma</h3><p>Cafeterías, talleres, miradores y playa. Lugares donde se puede hablar sin gritar y nadie tiene que tomar para encajar.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--strawberry)"></div><h3>Llegas sola y está bien</h3><p>Una anfitriona te recibe por tu nombre, hace las presentaciones y lleva un par de preguntas para romper el hielo. Nadie se queda en una esquina.</p></div>
-      <div class="pillar"><div class="dot" style="background:var(--butter)"></div><h3>Grupos chicos, de verdad</h3><p>Máximo 14 por salida, para que puedas conversar con todas. Los $5 de reserva garantizan que quien dice que va, llega.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--matcha)"></div><h3>Planes de día, con calma</h3><p>Cafés, talleres, miradores y playa. Lugares donde se puede platicar sin gritar y nadie tiene que tomar para encajar.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--strawberry)"></div><h3>Si llegás sola, está bien</h3><p>Te recibimos por tu nombre, te presentamos con las demás y llevamos un par de preguntas para romper el hielo. Nadie se queda sola en una esquina.</p></div>
+      <div class="pillar"><div class="dot" style="background:var(--butter)"></div><h3>Grupos pequeños</h3><p>Máximo 14 por salida, para que podás platicar con todas. Los $5 de reserva ayudan a que quien dice que va, llegue.</p></div>
     </div>
   </div>
 </section>
 
 <section class="block how" aria-labelledby="how-h">
   <div class="wrap">
-    <div class="sec-head"><span class="eyebrow">Cómo funciona</span><h2 id="how-h">De la reserva a la mesa</h2></div>
+    <div class="sec-head"><span class="eyebrow">Paso a paso</span><h2 id="how-h">Así funciona</h2></div>
     <ol>
-      <li><h3>Elige tu salida</h3><p>Llenas el formulario con tu nombre y WhatsApp. Te damos un código de reserva.</p></li>
-      <li><h3>Transfiere $5</h3><p>Por Transfer365 o transferencia directa, dentro de 24 horas. Nos mandas el comprobante con tu código.</p></li>
-      <li><h3>Entras al grupo</h3><p>Confirmamos tu pago y te unimos al chat de esa salida con la ubicación exacta.</p></li>
-      <li><h3>Llegas y listo</h3><p>Cada quien paga lo que consume en el lugar. Los $5 cubren la organización y la reserva del espacio.</p></li>
+      <li><h3>Escogé tu salida</h3><p>Llenás el formulario con tu nombre y tu WhatsApp y te damos un código de reserva.</p></li>
+      <li><h3>Transferí $5</h3><p>Por Transfer365 o transferencia directa, en las siguientes 24 horas. Nos mandás el comprobante con tu código.</p></li>
+      <li><h3>Te agregamos al grupo</h3><p>Confirmamos tu pago y te agregamos al chat de esa salida, con la ubicación exacta.</p></li>
+      <li><h3>Llegás y listo</h3><p>Cada quien paga lo que consume en el lugar. Los $5 cubren la organización y la reserva del espacio.</p></li>
     </ol>
   </div>
 </section>
 
 <section class="block meetups" id="meetups">
   <div class="wrap">
-    <div class="sec-head"><span class="eyebrow">Calendario</span><h2>Próximos meetups</h2><p>Los cupos se actualizan en tiempo real. Cuando una salida se llena, puedes anotarte en la lista de espera.</p></div>
+    <div class="sec-head"><span class="eyebrow">Calendario</span><h2>Próximas salidas</h2><p>Los cupos se actualizan solos. Si una salida se llena, te podés anotar en la lista de espera.</p></div>
     <div class="grid-m" id="list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
   </div>
 </section>
@@ -306,11 +306,11 @@ footer small{color:#B9ADA9}
   <div class="wrap">
     <div class="sec-head"><span class="eyebrow">Preguntas</span><h2>Lo que todas preguntan</h2></div>
     <div class="faq">
-      <details><summary>¿Qué incluyen los $5?</summary><p>La organización, la reserva del espacio y una anfitriona que te recibe. Lo que consumas (tu matcha, tu café, el material del taller) lo pagas tú directamente en el lugar.</p></details>
-      <details><summary>¿Y si no puedo llegar?</summary><p>Avísanos por WhatsApp con al menos 48 horas de anticipación y pasamos tus $5 a otra fecha. Con menos tiempo ya no es reembolsable, porque el espacio está reservado para ti.</p></details>
-      <details><summary>¿Tengo que ir con alguien?</summary><p>No. Casi todas llegan solas, esa es la idea. Si quieres ir con una amiga, que haga su propia reserva para que tenga su cupo.</p></details>
-      <details><summary>¿Cuánto dura cada encuentro?</summary><p>Entre 2 y 3 horas. Puedes irte cuando quieras.</p></details>
-      <details><summary>¿Cómo sé que es seguro?</summary><p>Los encuentros son en lugares públicos y conocidos, de día o al atardecer. La ubicación exacta solo se comparte con quienes confirmaron su pago, y la comunidad es solo para mujeres.</p></details>
+      <details><summary>¿Qué incluyen los $5?</summary><p>La organización, la reserva del espacio y una anfitriona que te recibe. Lo que consumas (tu matcha, tu café, el material del taller) lo pagás vos directamente en el lugar.</p></details>
+      <details><summary>¿Y si no puedo llegar?</summary><p>Avisanos por WhatsApp con al menos 48 horas y pasamos tus $5 a otra fecha. Con menos tiempo ya no se devuelve, porque el lugar estaba apartado para vos.</p></details>
+      <details><summary>¿Tengo que ir con alguien?</summary><p>No. Casi todas llegan solas, esa es la idea. Si querés ir con una amiga, que haga su propia reserva para que tenga su cupo.</p></details>
+      <details><summary>¿Cuánto dura cada salida?</summary><p>Entre 2 y 3 horas. Te podés ir cuando querás.</p></details>
+      <details><summary>¿Cómo sé que es seguro?</summary><p>Las salidas son en lugares públicos y conocidos, de día o al atardecer. La ubicación exacta solo se comparte con quienes confirmaron su pago, y la comunidad es solo para mujeres.</p></details>
       <details><summary>¿Cuántos años tienen las que van?</summary><p>Es para mujeres mayores de 18. La mayoría tiene entre 22 y 38 años.</p></details>
     </div>
   </div>
@@ -319,8 +319,8 @@ footer small{color:#B9ADA9}
 
 <footer>
   <div class="wrap">
-    <div><span class="logo-word">Girls<em style="color:var(--strawberry);font-style:normal">&amp;</em> El Salvador</span><br><small>Encuentros solo para mujeres · San Salvador, Santa Ana y La Libertad</small></div>
-    <a class="btn btn-wa" id="foot-wa" href="#reservar">Escríbenos por WhatsApp</a>
+    <div><span class="logo-word">Girls<em style="color:var(--strawberry);font-style:normal">&amp;</em> El Salvador</span><br><small>Salidas solo para mujeres · San Salvador, Santa Ana y La Libertad</small></div>
+    <a class="btn btn-wa" id="foot-wa" href="#reservar">Escribinos por WhatsApp</a>
   </div>
 </footer>
 
@@ -341,14 +341,14 @@ const longDate = iso => fmt(iso, { weekday:"long", day:"numeric", month:"long" }
 let meetups = [], waNumber = "";
 
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast.h); toast.h=setTimeout(()=>t.hidden=true,2200); }
-async function copy(text){ try{ await navigator.clipboard.writeText(text); toast("Copiado"); }catch(e){ toast("Mantén presionado para copiar"); } }
+async function copy(text){ try{ await navigator.clipboard.writeText(text); toast("Copiado"); }catch(e){ toast("Dejá presionado para copiar"); } }
 function waLink(text){ return "https://wa.me/" + waNumber + "?text=" + encodeURIComponent(text); }
 
 async function load(){
   const [m, c] = await Promise.all([ sb.rpc("public_meetups"), sb.rpc("public_contact") ]);
   waNumber = c.data || "";
   if (waNumber) $("#foot-wa").href = waLink("¡Hola! Quiero saber más de Girls& El Salvador 💕");
-  if (m.error){ $("#list").innerHTML = '<p class="empty">No pudimos cargar las fechas. Recarga la página en un momento.</p>'; fillSelect(); return; }
+  if (m.error){ $("#list").innerHTML = '<p class="empty">No pudimos cargar las fechas. Recargá la página en un momento.</p>'; fillSelect(); return; }
   meetups = m.data || [];
   renderList(); fillSelect(); renderBanner();
 }
@@ -360,7 +360,7 @@ function spotsLabel(m){
 }
 
 function renderList(){
-  if (!meetups.length){ $("#list").innerHTML = '<p class="empty">Estamos armando las próximas fechas. Anótate en el formulario y te avisamos primero.</p>'; return; }
+  if (!meetups.length){ $("#list").innerHTML = '<p class="empty">Estamos armando las próximas fechas. Anotate en el formulario y te avisamos primero.</p>'; return; }
   $("#list").innerHTML = meetups.map(m => {
     const [cls, txt] = spotsLabel(m);
     return `<article class="m">
@@ -378,7 +378,7 @@ function renderList(){
 function fillSelect(){
   const sel = $("#f-meetup");
   const opts = meetups.map(m => `<option value="${esc(m.id)}">${esc(m.title)} · ${esc(fmt(m.starts_at,{weekday:"short",day:"numeric",month:"short"}))} · ${esc(m.zone)}${m.spots_left<=0?' (lista de espera)':''}</option>`);
-  sel.innerHTML = (meetups.length ? '<option value="">Elige una fecha…</option>' : '') + opts.join("") + '<option value="none">Ninguna fecha me queda: avísenme de las próximas</option>';
+  sel.innerHTML = (meetups.length ? '<option value="">Escogé una fecha…</option>' : '') + opts.join("") + '<option value="none">Ninguna fecha me queda, avísenme de las próximas</option>';
   syncTheme();
 }
 
@@ -386,7 +386,7 @@ function renderBanner(){
   const next = meetups.find(m => m.spots_left > 0);
   if (!next) return;
   const b = $("#banner");
-  b.innerHTML = `Próximo encuentro: <b>${esc(next.title)} en ${esc(next.zone)}</b>, ${esc(fmt(next.starts_at,{weekday:"long",day:"numeric",month:"long"}))}${next.spots_left<=4?` · solo ${next.spots_left} cupos`:''} <a href="#reservar" data-pick="${esc(next.id)}">Reservar →</a>`;
+  b.innerHTML = `Próxima salida: <b>${esc(next.title)} en ${esc(next.zone)}</b>, ${esc(fmt(next.starts_at,{weekday:"long",day:"numeric",month:"long"}))}${next.spots_left<=4?` · solo ${next.spots_left} cupos`:''} <a href="#reservar" data-pick="${esc(next.id)}">Reservar →</a>`;
   b.hidden = false;
 }
 
@@ -415,18 +415,18 @@ $("#form").addEventListener("submit", async e => {
   const name = $("#f-name").value.trim();
   const phone = $("#f-phone").value.replace(/\D/g,"");
   const mv = $("#f-meetup").value;
-  if (name.length < 2) return showErr("Escribe tu nombre para saber cómo llamarte.");
-  if (!/^[267]\d{7}$/.test(phone)) return showErr("Revisa tu WhatsApp: son 8 dígitos y empieza con 6 o 7.");
-  if (!mv) return showErr("Elige a qué salida quieres ir.");
+  if (name.length < 2) return showErr("Escribí tu nombre para saber cómo llamarte.");
+  if (!/^[267]\d{7}$/.test(phone)) return showErr("Revisá tu WhatsApp: son 8 dígitos y empieza con 6 o 7.");
+  if (!mv) return showErr("Escogé a cuál salida querés ir.");
   const btn = $("#submit"); btn.disabled = true; btn.textContent = "Reservando…";
   const { data, error } = await sb.rpc("reserve", { p_meetup_id: mv === "none" ? null : mv, p_name: name, p_whatsapp: phone, p_theme: mv === "none" ? $("#f-theme").value : null });
-  btn.disabled = false; btn.textContent = "Reservar mi lugar";
+  btn.disabled = false; btn.textContent = "Apartar mi lugar";
   if (error){
     const m = error.message || "";
-    if (m.includes("MEETUP_UNAVAILABLE")) { showErr("Esa salida ya cerró. Elige otra fecha."); load(); }
-    else if (m.includes("TOO_MANY")) showErr("Ya hiciste varias reservas hoy con este número. Escríbenos por WhatsApp y te ayudamos.");
-    else if (m.includes("WHATSAPP")) showErr("Revisa tu número de WhatsApp.");
-    else showErr("No se pudo guardar tu reserva. Revisa tu conexión e intenta de nuevo.");
+    if (m.includes("MEETUP_UNAVAILABLE")) { showErr("Esa salida ya cerró. Escogé otra fecha."); load(); }
+    else if (m.includes("TOO_MANY")) showErr("Ya hiciste varias reservas hoy con este número. Escribinos por WhatsApp y te ayudamos.");
+    else if (m.includes("WHATSAPP")) showErr("Revisá tu número de WhatsApp.");
+    else showErr("No se pudo guardar tu reserva. Revisá tu conexión e intentá de nuevo.");
     return;
   }
   if (data.whatsapp) waNumber = data.whatsapp;
@@ -439,7 +439,7 @@ function renderDone(d, name){
   const m = d.meetup;
   let html;
   if (d.status === "pending" || d.status === "paid"){
-    const msg = `¡Hola! Soy ${name}. Reservé ${m.title} (${fmt(m.starts_at,{weekday:"long",day:"numeric",month:"long"})}). Mi código es ${d.code}. Te envío el comprobante de los $${Number(m.price).toFixed(0)} 💸`;
+    const msg = `¡Hola! Soy ${name}. Reservé ${m.title} (${fmt(m.starts_at,{weekday:"long",day:"numeric",month:"long"})}). Mi código es ${d.code}. Te mando el comprobante de los $${Number(m.price).toFixed(0)} 💸`;
     html = `<span class="ok-badge">${d.duplicate ? "Ya tenías esta reserva" : "Lugar apartado por " + d.pay.hold_hours + " horas"}</span>
       <h2 style="font-size:28px;margin-top:14px">¡Listo, ${esc(first)}!</h2>
       <p class="sub" style="margin-bottom:0">${esc(m.title)} · ${esc(longDate(m.starts_at))} · ${esc(m.zone)}, ${esc(m.city)}</p>
@@ -451,15 +451,15 @@ function renderDone(d, name){
         <div><dt>Cuenta (${esc(d.pay.type)})</dt><dd>${esc(d.pay.number)} <button type="button" class="copy" data-copy="${esc(d.pay.number)}">Copiar</button></dd></div>
         <div><dt>Concepto</dt><dd>${esc(d.code)} <button type="button" class="copy" data-copy="${esc(d.code)}">Copiar</button></dd></div>
       </dl>
-      <ol class="steps-mini"><li>${esc(d.pay.instructions)}</li><li>Pon tu código en el concepto de la transferencia.</li><li>Cuando confirmemos, te unimos al grupo de WhatsApp con la ubicación.</li></ol>
-      <a class="btn btn-wa" href="${esc(waLink(msg))}" target="_blank" rel="noopener">Enviar comprobante por WhatsApp</a>
-      <p class="fine">Si el botón no abre WhatsApp, escríbenos al +${esc(waNumber.slice(0,3))} ${esc(waNumber.slice(3,7))} ${esc(waNumber.slice(7))}.</p>`;
+      <ol class="steps-mini"><li>${esc(d.pay.instructions)}</li><li>Poné tu código en el concepto de la transferencia.</li><li>Cuando confirmemos el pago, te agregamos al grupo de WhatsApp con la ubicación.</li></ol>
+      <a class="btn btn-wa" href="${esc(waLink(msg))}" target="_blank" rel="noopener">Mandar comprobante por WhatsApp</a>
+      <p class="fine">Si el botón no abre WhatsApp, escribinos al +${esc(waNumber.slice(0,3))} ${esc(waNumber.slice(3,7))} ${esc(waNumber.slice(7))}.</p>`;
   } else {
     const what = m ? `${m.title} (${fmt(m.starts_at,{weekday:"long",day:"numeric",month:"long"})})` : "las próximas fechas";
     const msg = `¡Hola! Soy ${name}. Me anoté en la lista de espera para ${what}. Mi código es ${d.code}.`;
     html = `<span class="ok-badge wait">Lista de espera</span>
       <h2 style="font-size:28px;margin-top:14px">¡Anotada, ${esc(first)}!</h2>
-      <p class="sub">${m ? `${esc(m.title)} está lleno por ahora. Si se libera un cupo, te escribimos por WhatsApp en orden de llegada.` : "Te escribimos por WhatsApp en cuanto abramos nuevas fechas, antes que a nadie."} <b>No transfieras todavía.</b></p>
+      <p class="sub">${m ? `${esc(m.title)} está lleno por ahora. Si se libera un cupo, te escribimos por WhatsApp en orden de llegada.` : "Te escribimos por WhatsApp en cuanto abramos nuevas fechas, antes que a nadie."} <b>Todavía no transferás.</b></p>
       <div class="code">${esc(d.code)}</div><p class="fine" style="text-align:left;margin:0 0 18px">Tu código</p>
       <a class="btn btn-wa" href="${esc(waLink(msg))}" target="_blank" rel="noopener">Escribirnos por WhatsApp</a>`;
   }
