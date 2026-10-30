@@ -59,7 +59,7 @@ header .btn{background:transparent;color:#fff;border-color:#5a5052}
 
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px}
 .bar .grow{flex:1;min-width:240px}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .stat b{display:block;font:700 26px/1.1 var(--display);font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
@@ -152,9 +152,10 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
         <label class="f">Descripción en inglés (opcional)<textarea class="input" id="m-desc-en" rows="2"></textarea></label>
         <div class="grid3">
           <label class="f">Cupos<input class="input" id="m-cap" type="number" min="1" max="60" value="12" required></label>
-          <label class="f">Reserva ($)<input class="input" id="m-price" type="number" min="0" step="0.5" value="5" required></label>
+          <label class="f">Reserva ($, 0 = gratis)<input class="input" id="m-price" type="number" min="0" step="0.5" value="5" required></label>
           <label class="f">Estado<select class="input" id="m-status"><option value="open">Abierta (visible)</option><option value="draft">Borrador (oculta)</option><option value="closed">Cerrada</option><option value="done">Realizada</option><option value="cancelled">Cancelada</option></select></label>
         </div>
+        <label class="f" style="max-width:260px">Mínimo para que se haga<input class="input" id="m-min" type="number" min="1" max="60" value="5" required></label>
         <div style="display:flex;gap:10px"><button class="btn btn-primary" type="submit">Guardar salida</button><button class="btn" type="button" id="m-new">Limpiar</button></div>
       </form>
     </section>
@@ -263,12 +264,14 @@ function render(){
   const paid = c("paid") + c("attended"), pend = c("pending"), wait = c("waitlist");
   const cap = m?.capacity || 0, price = Number(m?.price || 0);
   const seat = cap ? Math.max(cap - paid - pend, 0) : 0;
+  const free = price === 0, min = m?.min_people || 5, met = paid >= min;
   $("#stats").innerHTML = m ? `
-    <div class="stat"><span>Pagadas</span><b>${paid} / ${cap}</b><div class="meter"><i style="width:${cap?paid/cap*100:0}%;background:var(--matcha-ink)"></i><i style="width:${cap?pend/cap*100:0}%;background:#E8C873"></i></div></div>
-    <div class="stat"><span>Pendientes</span><b>${pend}</b></div>
+    <div class="stat"><span>${met ? "✓ Se hace" : "Para el mínimo"}</span><b>${paid} / ${min}</b><div class="meter"><i style="width:${Math.min(paid/min*100,100)}%;background:${met ? "var(--matcha-ink)" : "#E8C873"}"></i></div></div>
+    <div class="stat"><span>${free ? "Anotadas" : "Pagadas"}</span><b>${paid} / ${cap}</b><div class="meter"><i style="width:${cap?paid/cap*100:0}%;background:var(--matcha-ink)"></i><i style="width:${cap?pend/cap*100:0}%;background:#E8C873"></i></div></div>
+    ${free ? "" : `<div class="stat"><span>Pendientes de pago</span><b>${pend}</b></div>`}
     <div class="stat"><span>Cupos libres</span><b>${seat}</b></div>
     <div class="stat"><span>Lista de espera</span><b>${wait}</b></div>
-    <div class="stat"><span>Cobrado</span><b>$${(paid*price).toFixed(2)}</b></div>` :
+    <div class="stat"><span>Cobrado</span><b>${free ? "Gratis" : "$" + (paid*price).toFixed(2)}</b></div>` :
     `<div class="stat"><span>Interesadas sin fecha</span><b>${rows.filter(r=>r.status==="waitlist").length}</b></div>`;
   const v = $("#venue");
   if (m){ v.hidden = false; v.innerHTML = `<b>${esc(when(m.starts_at))}</b> · ${esc(m.zone)}, ${esc(m.city)} · Lugar exacto: ${m.venue_private ? esc(m.venue_private) : "<i>falta agregarlo en Meetups</i>"}`; } else v.hidden = true;
@@ -282,15 +285,16 @@ function render(){
     const msgs = waMessages(r, m, first);
     const acts = [];
     if (r.status === "pending") acts.push(`<button class="btn btn-sm btn-dark" data-act="paid" data-id="${r.id}">Marcar pagada</button>`, `<a class="btn btn-sm" target="_blank" rel="noopener" href="${esc(wa(r.whatsapp, msgs.remind))}">Recordar pago</a>`);
+    if (r.status === "paid" && !met) acts.push(`<a class="btn btn-sm" target="_blank" rel="noopener" href="${esc(wa(r.whatsapp, msgs.notMet))}" title="Si no se llega al mínimo">Avisar que no se hace</a>`);
     if (r.status === "paid") acts.push(`<a class="btn btn-sm btn-wa" target="_blank" rel="noopener" href="${esc(wa(r.whatsapp, msgs.confirm))}">Enviar confirmación</a>`, `<a class="btn btn-sm" target="_blank" rel="noopener" href="${esc(wa(r.whatsapp, msgs.dayBefore))}">Recordatorio</a>`, `<button class="btn btn-sm" data-act="attended" data-id="${r.id}">Asistió</button>`, `<button class="btn btn-sm" data-act="no_show" data-id="${r.id}">No llegó</button>`);
-    if (r.status === "waitlist") acts.push(m ? `<button class="btn btn-sm btn-dark" data-act="pending" data-id="${r.id}">Darle cupo</button>` : "", `<a class="btn btn-sm" target="_blank" rel="noopener" href="${esc(wa(r.whatsapp, m ? msgs.spot : msgs.newDates))}">${m ? "Avisar cupo" : "Avisar fechas"}</a>`);
+    if (r.status === "waitlist") acts.push(m ? `<button class="btn btn-sm btn-dark" data-act="${free ? "paid" : "pending"}" data-id="${r.id}">Darle cupo</button>` : "", `<a class="btn btn-sm" target="_blank" rel="noopener" href="${esc(wa(r.whatsapp, m ? msgs.spot : msgs.newDates))}">${m ? "Avisar cupo" : "Avisar fechas"}</a>`);
     if (["pending","paid","waitlist"].includes(r.status)) acts.push(`<button class="btn btn-sm" data-act="cancelled" data-id="${r.id}">Cancelar</button>`);
-    if (["cancelled","no_show","attended"].includes(r.status)) acts.push(`<button class="btn btn-sm" data-act="${m?'pending':'waitlist'}" data-id="${r.id}">Reactivar</button>`);
+    if (["cancelled","no_show","attended"].includes(r.status)) acts.push(`<button class="btn btn-sm" data-act="${m ? (free ? 'paid' : 'pending') : 'waitlist'}" data-id="${r.id}">Reactivar</button>`);
     return `<tr>
       <td class="code">${esc(r.code)}</td>
       <td><b>${esc(r.name)}</b>${r.lang==="en"?` <span class="pill s-waitlist" title="Reservó en inglés">EN</span>`:""}${r.theme_pref?`<div class="small">Prefiere: ${esc(r.theme_pref)}</div>`:""}${r.notes?`<div class="small">${esc(r.notes)}</div>`:""}</td>
       <td style="white-space:nowrap"><a href="${esc(wa(r.whatsapp,""))}" target="_blank" rel="noopener">${esc(prettyPhone(r.whatsapp))}</a></td>
-      <td><span class="pill s-${r.status}">${LABEL[r.status]}</span>${late?`<div class="late">Venció el plazo</div>`:""}</td>
+      <td><span class="pill s-${r.status}">${free && r.status === "paid" ? "Anotada" : LABEL[r.status]}</span>${late?`<div class="late">Venció el plazo</div>`:""}</td>
       <td class="small" style="white-space:nowrap">${esc(fmt(r.created_at,{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}))}</td>
       <td><div class="acts">${acts.join("")}</div></td></tr>`;
   }).join("");
@@ -304,9 +308,10 @@ function waMessagesEn(r, m, first){
   const pay = `${settings.bank_name}, ${acct} account ${settings.account_number}, holder ${settings.account_holder}`;
   return {
     remind: `Hi ${first}! 💕 This is Girls& about your booking for ${m.title} (${d}). Your code is ${r.code}. To confirm your spot, just send the $${Number(m.price).toFixed(0)} transfer: ${pay}. Send me the receipt here and you're all set.`,
-    confirm: `${first}, your spot is confirmed! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nCome 10 minutes early and ask for the Girls& table. Everyone pays for what they order. If you can't make it, let me know 48 hours ahead and we'll move your $5 to another date. See you there! 💕`,
+    confirm: `${first}, your spot is confirmed! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nCome 10 minutes early and ask for the Girls& table. Everyone pays for what they order. ${Number(m.price) > 0 ? "If you can't make it, let me know 48 hours ahead and we'll move your $5 to another date. " : "If you can't make it, just let me know so someone else can have your spot. "}See you there! 💕`,
+    notMet: `Hi ${first}! 💕 About ${m.title} (${d}): we didn't reach the minimum of ${m.min_people || 5} this time, so it won't happen on that date. ${Number(m.price) > 0 ? "Would you like your $5 back, or should I move it to the next date?" : "I'll let you know as soon as there's a new date."} Thanks for signing up!`,
     dayBefore: `Hi ${first}! ${m.title} is tomorrow 💕\n📅 ${d}\n📍 ${m.venue_private || m.zone}\nSee you there. If you can't make it after all, let me know today so I can give your spot to someone on the waitlist.`,
-    spot: `Hi ${first}! 💕 A spot opened up for ${m.title} (${d}). Want it? If so, transfer $${Number(m.price).toFixed(0)} to ${pay} with your code ${r.code} and send me the receipt. I'll hold it for 24 hours.`
+    spot: Number(m.price) === 0 ? `Hi ${first}! 💕 A spot opened up for ${m.title} (${d}). It's free. Want it? Just reply yes and I'll save it for you.` : `Hi ${first}! 💕 A spot opened up for ${m.title} (${d}). Want it? If so, transfer $${Number(m.price).toFixed(0)} to ${pay} with your code ${r.code} and send me the receipt. I'll hold it for 24 hours.`
   };
 }
 
@@ -316,9 +321,10 @@ function waMessages(r, m, first){
   const d = when(m.starts_at);
   return {
     remind: `¡Hola ${first}! 💕 Te escribo de Girls& por tu reserva para ${m.title} (${d}). Tu código es ${r.code}. Para confirmar tu lugar solo falta la transferencia de $${Number(m.price).toFixed(0)}: ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} a nombre de ${settings.account_holder}. Me mandás el comprobante por aquí y listo.`,
-    confirm: `¡${first}, tu lugar está confirmado! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nLlegá con 10 minutos de anticipación y preguntá por la mesa de Girls&. Cada quien paga lo que consume. Si no podés llegar, avisame con 48 horas y pasamos tus $5 a otra fecha. ¡Nos vemos! 💕`,
+    confirm: `¡${first}, tu lugar está confirmado! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nLlegá con 10 minutos de anticipación y preguntá por la mesa de Girls&. Cada quien paga lo que consume. ${Number(m.price) > 0 ? "Si no podés llegar, avisame con 48 horas y pasamos tus $5 a otra fecha. " : "Si no podés llegar, avisame para darle el lugar a alguien más. "}¡Nos vemos! 💕`,
+    notMet: `¡Hola ${first}! 💕 Te escribo por ${m.title} (${d}): esta vez no llegamos al mínimo de ${m.min_people || 5}, así que no se va a hacer en esa fecha. ${Number(m.price) > 0 ? "¿Preferís que te devuelva tus $5 o los paso a la próxima fecha?" : "Te aviso apenas tengamos nueva fecha."} ¡Gracias por anotarte!`,
     dayBefore: `¡Hola ${first}! Mañana es ${m.title} 💕\n📅 ${d}\n📍 ${m.venue_private || m.zone}\nTe espero. Si al final no podés, avisame hoy para darle tu lugar a alguien de la lista de espera.`,
-    spot: `¡Hola ${first}! 💕 Se liberó un cupo para ${m.title} (${d}). ¿Lo querés? Si sí, transferí $${Number(m.price).toFixed(0)} a ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} (${settings.account_holder}), con tu código ${r.code}, y me mandás el comprobante. Te lo guardo 24 horas.`
+    spot: Number(m.price) === 0 ? `¡Hola ${first}! 💕 Se liberó un cupo para ${m.title} (${d}). Es gratis. ¿Lo querés? Respondeme que sí y te lo aparto.` : `¡Hola ${first}! 💕 Se liberó un cupo para ${m.title} (${d}). ¿Lo querés? Si sí, transferí $${Number(m.price).toFixed(0)} a ${settings.bank_name}, cuenta ${settings.account_type.toLowerCase()} ${settings.account_number} (${settings.account_holder}), con tu código ${r.code}, y me mandás el comprobante. Te lo guardo 24 horas.`
   };
 }
 
@@ -357,7 +363,7 @@ $("#mlist").addEventListener("click", e => {
   $("#mform-h").textContent = "Editar " + m.title;
   $("#m-id").value = m.id; $("#m-title").value = m.title; $("#m-theme").value = m.theme; $("#m-city").value = m.city; $("#m-zone").value = m.zone;
   $("#m-start").value = toLocalInput(m.starts_at); $("#m-venue").value = m.venue_private || ""; $("#m-desc").value = m.description || ""; $("#m-desc-en").value = m.description_en || "";
-  $("#m-cap").value = m.capacity; $("#m-price").value = m.price; $("#m-status").value = m.status;
+  $("#m-cap").value = m.capacity; $("#m-price").value = m.price; $("#m-min").value = m.min_people || 5; $("#m-status").value = m.status;
   $("#mform").scrollIntoView({ behavior:"smooth" });
 });
 $("#m-new").addEventListener("click", () => { $("#mform").reset(); $("#m-id").value=""; $("#mform-h").textContent="Nueva salida"; });
@@ -365,7 +371,7 @@ $("#mform").addEventListener("submit", async e => {
   e.preventDefault();
   const rec = { title: $("#m-title").value.trim(), theme: $("#m-theme").value, city: $("#m-city").value, zone: $("#m-zone").value.trim(),
     starts_at: $("#m-start").value + ":00-06:00", venue_private: $("#m-venue").value.trim() || null, description: $("#m-desc").value.trim() || null, description_en: $("#m-desc-en").value.trim() || null,
-    capacity: +$("#m-cap").value, price: +$("#m-price").value, status: $("#m-status").value };
+    capacity: +$("#m-cap").value, price: +$("#m-price").value, min_people: +$("#m-min").value, status: $("#m-status").value };
   const id = $("#m-id").value;
   const { error } = id ? await sb.from("meetups").update(rec).eq("id", id) : await sb.from("meetups").insert(rec);
   if (error) return toast("No se pudo guardar: " + error.message);

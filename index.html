@@ -91,7 +91,8 @@ header.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--b
 .card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .card-head small{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--rose-ink)}
 .card-head h2{font-size:28px;margin-top:4px}
-.price{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--strawberry);color:var(--rose-ink);font:700 18px/1 var(--display)}
+.price.is-free{width:auto;padding:0 12px;font-size:16px}
+.price{flex:none;min-width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--strawberry);color:var(--rose-ink);font:700 18px/1 var(--display)}
 .card p.sub{color:var(--muted);font-size:14px;margin:10px 0 18px}
 .field{display:grid;gap:7px;margin-bottom:16px}
 .field label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
@@ -172,6 +173,12 @@ section.block .wrap{padding-block:80px}
 .spots{font-size:13px;font-weight:700}
 .spots.low{color:var(--terracotta)}
 .spots.full{color:var(--muted)}
+.spots{display:grid;gap:5px;min-width:0}
+.spots small{font-weight:500;color:var(--muted)}
+.prog{display:block;width:120px;max-width:100%;height:6px;border-radius:9px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--matcha-ink);border-radius:9px}
+.spots.ok{color:var(--matcha-ink)}
+.pricetag{font-weight:700;color:var(--rose-ink);flex-basis:100%}
 .m-foot .btn{padding:10px 16px;font-size:14px}
 .empty{text-align:center;color:var(--muted);padding:30px;border:1px dashed var(--line);border-radius:var(--r)}
 .skel{height:240px;border-radius:22px;background:linear-gradient(90deg,var(--bg),#F3ECE8,var(--bg));background-size:200% 100%;animation:sh 1.4s infinite}
@@ -231,7 +238,7 @@ footer small{color:#B9ADA9}
       <form id="form" novalidate>
         <div class="card-head">
           <div><small data-i18n="cardEyebrow">Próximas salidas</small><h2 data-i18n="cardTitle">Apartá tu lugar</h2></div>
-          <div class="price">$5</div>
+          <div class="price" id="price-badge">$5</div>
         </div>
         <p class="sub" data-i18n="cardSub">Escogé tu salida y te escribimos por WhatsApp con el grupo y la ubicación.</p>
 
@@ -261,7 +268,7 @@ footer small{color:#B9ADA9}
             <option value="coffee">Girls&amp;coffee</option>
           </select>
         </div>
-        <div class="note" data-i18n="note">Los $5 se pagan por transferencia después de reservar. Te guardamos el lugar 24 horas mientras nos mandás el comprobante.</div>
+        <div class="note" id="note">Los $5 se pagan por transferencia después de reservar. Te guardamos el lugar 24 horas mientras nos mandás el comprobante.</div>
         <p class="err" id="err" role="alert" hidden></p>
         <button class="btn btn-primary" id="submit" type="submit" data-i18n="cta">Apartar mi lugar</button>
         <p class="fine" data-i18n="fine">Tu número solo lo usamos para Girls&amp;.</p>
@@ -330,6 +337,7 @@ footer small{color:#B9ADA9}
       <details><summary data-i18n="q4">¿Cuánto dura cada salida?</summary><p data-i18n="a4">Entre 2 y 3 horas. Te podés ir cuando querás.</p></details>
       <details><summary data-i18n="q5">¿Cómo sé que es seguro?</summary><p data-i18n="a5">Las salidas son en lugares públicos y conocidos, de día o al atardecer. La ubicación exacta solo se comparte con quienes confirmaron su pago, y la comunidad es solo para mujeres.</p></details>
       <details><summary data-i18n="q6">¿Cuántos años tienen las que van?</summary><p data-i18n="a6">Es para mujeres mayores de 18. La mayoría tiene entre 22 y 38 años.</p></details>
+      <details><summary data-i18n="q8">¿Y si no se juntan 5?</summary><p data-i18n="a8"></p></details>
       <details><summary data-i18n="q7">¿Puedo ir si no hablo español?</summary><p data-i18n="a7">Sí. Muchas hablamos inglés. Si reservás en inglés, te sentamos cerca de alguien que lo hable.</p></details>
     </div>
   </div>
@@ -359,7 +367,7 @@ es: {
   eyebrow:"Solo para mujeres · San Salvador, Santa Ana y La Libertad",
   h1:"Hacer amigas de adulta <em>no es fácil.</em>",
   lede:"Por eso armamos salidas tranquilas, en grupos pequeños, para conocer gente nueva sin presión: un matcha, una tarde en la playa, un taller de cerámica. <b>La mayoría llega sola.</b>",
-  chip1:"Planes de día", chip2:"Solo mujeres", chip3:"Grupos de 10 a 14", chip4:"$5 para apartar tu lugar",
+  chip1:"Planes de día", chip2:"Solo mujeres", chip3:"Grupos de 10 a 14", chip4:"Se confirma con 5 personas",
   sticker:"Solo 10–14 cupos por salida", cardEyebrow:"Próximas salidas", cardTitle:"Apartá tu lugar",
   cardSub:"Escogé tu salida y te escribimos por WhatsApp con el grupo y la ubicación.",
   lblName:"¿Cómo te llamás?", phName:"Ej: Sofía Gómez", lblPhone:"Tu WhatsApp", lblMeetup:"¿A cuál salida querés ir?",
@@ -373,27 +381,31 @@ es: {
   p3t:"Grupos pequeños", p3:"Máximo 14 por salida, para que podás platicar con todas. Los $5 de reserva ayudan a que quien dice que va, llegue.",
   howEyebrow:"Paso a paso", howTitle:"Así funciona",
   s1t:"Escogé tu salida", s1:"Llenás el formulario con tu nombre y tu WhatsApp y te damos un código de reserva.",
-  s2t:"Transferí $5", s2:"Por Transfer365 o transferencia directa, en las siguientes 24 horas. Nos mandás el comprobante con tu código.",
-  s3t:"Te agregamos al grupo", s3:"Confirmamos tu pago y te agregamos al chat de esa salida, con la ubicación exacta.",
-  s4t:"Llegás y listo", s4:"Cada quien paga lo que consume en el lugar. Los $5 cubren la organización y la reserva del espacio.",
+  s2t:"Apartá tu lugar", s2:"Las salidas de noviembre son gratis. Desde diciembre se aparta con un depósito de $5 por transferencia.",
+  s3t:"Cuando seamos 5, se hace", s3:"Te avisamos por WhatsApp y te agregamos al grupo de esa salida, con la ubicación exacta. Si no llegamos a 5, te devolvemos tu depósito o lo pasamos a otra fecha.",
+  s4t:"Llegás y listo", s4:"Cada quien paga lo que consume en el lugar.",
   calEyebrow:"Calendario", calText:"Los cupos se actualizan solos. Si una salida se llena, te podés anotar en la lista de espera.",
   faqTitle:"Lo que todas preguntan",
-  q1:"¿Qué incluyen los $5?", a1:"La organización, la reserva del espacio y una anfitriona que te recibe. Lo que consumas (tu matcha, tu café, el material del taller) lo pagás vos directamente en el lugar.",
+  q1:"¿Cuánto cuesta?", a1:"Las salidas de noviembre son gratis. Desde diciembre, apartar tu lugar cuesta $5, que cubren la organización, la reserva del espacio y una anfitriona que te recibe. Lo que consumas (tu matcha, tu café, el material del taller) lo pagás vos directamente en el lugar.",
   q2:"¿Y si no puedo llegar?", a2:"Avisanos por WhatsApp con al menos 48 horas y pasamos tus $5 a otra fecha. Con menos tiempo ya no se devuelve, porque el lugar estaba apartado para vos.",
   q3:"¿Tengo que ir con alguien?", a3:"No. Casi todas llegan solas, esa es la idea. Si querés ir con una amiga, que haga su propia reserva para que tenga su cupo.",
   q4:"¿Cuánto dura cada salida?", a4:"Entre 2 y 3 horas. Te podés ir cuando querás.",
   q5:"¿Cómo sé que es seguro?", a5:"Las salidas son en lugares públicos y conocidos, de día o al atardecer. La ubicación exacta solo se comparte con quienes confirmaron su pago, y la comunidad es solo para mujeres.",
   q6:"¿Cuántos años tienen las que van?", a6:"Es para mujeres mayores de 18. La mayoría tiene entre 22 y 38 años.",
+  q8:"¿Y si no se juntan 5?", a8:"La salida no se hace. Te avisamos por WhatsApp unos días antes y te devolvemos tu depósito o lo pasamos a otra fecha, como prefierás.",
   q7:"¿Puedo ir si no hablo español?", a7:"Sí. Muchas hablamos inglés. Si reservás en inglés, te sentamos cerca de alguien que lo hable.",
   footLine:"Salidas solo para mujeres · San Salvador, Santa Ana y La Libertad", footWa:"Escribinos por WhatsApp",
   langBtn:"EN", langAria:"Read in English", langCode:"en",
   copied:"Copiado", holdToCopy:"Dejá presionado para copiar",
   waHello:"¡Hola! Quiero saber más de Girls& El Salvador 💕",
   loadErr:"No pudimos cargar las fechas. Recargá la página en un momento.",
+  toGo:n=>n===1?"Falta 1 para confirmarla":`Faltan ${n} para confirmarla`, joined:(c,m)=>`${c} de ${m} anotadas`, confirmed:"Confirmada", freeTag:"Gratis", depositTag:p=>`$${p} de reserva`,
+  noteFree:"Esta salida es gratis. Solo apartá tu lugar y te avisamos por WhatsApp cuando seamos al menos 5.", notePaid:"Los $5 se pagan por transferencia después de reservar. Si no llegamos a 5, te los devolvemos o los pasamos a otra fecha.", badgeFree:"Gratis",
+  freeReady:"Esta salida es gratis. Cuando seamos al menos 5, te escribimos por WhatsApp para confirmarla y mandarte la ubicación.", freeBadge:"Lugar apartado", msgFree:(n,t,d,c)=>`¡Hola! Soy ${n}. Me anoté a ${t} (${d}). Mi código es ${c}.`, refundNote:"Si no llegamos a 5, te devolvemos los $5 o los pasamos a otra fecha.",
   full:"Lleno · lista de espera", last:"¡Último cupo!", few:n=>`Solo ${n} cupos`, free:(n,c)=>`${n} de ${c} cupos libres`,
   empty:"Estamos armando las próximas fechas. Anotate en el formulario y te avisamos primero.",
   reserve:"Reservar", waitlist:"Lista de espera", waitTag:" (lista de espera)", pickDate:"Escogé una fecha…", noDate:"Ninguna fecha me queda, avísenme de las próximas",
-  banner:(t,z,d,few)=>`Próxima salida: <b>${t} en ${z}</b>, ${d}${few?` · solo ${few} cupos`:''}`, bannerCta:"Reservar →",
+  banner:(t,z,d,few,free)=>`Próxima salida${free?" (gratis)":""}: <b>${t} en ${z}</b>, ${d}${few?` · solo ${few} cupos`:''}`, bannerCta:"Reservar →",
   errName:"Escribí tu nombre para saber cómo llamarte.", errPhone:"Revisá tu WhatsApp: son 8 dígitos y empieza con 6 o 7.", errPhoneIntl:"Revisá el código de país y tu número de WhatsApp.", ccAria:"Código de país", errMeetup:"Escogé a cuál salida querés ir.",
   sending:"Reservando…", errClosed:"Esa salida ya cerró. Escogé otra fecha.", errMany:"Ya hiciste varias reservas hoy con este número. Escribinos por WhatsApp y te ayudamos.",
   errWa:"Revisá tu número de WhatsApp.", errNet:"No se pudo guardar tu reserva. Revisá tu conexión e intentá de nuevo.",
@@ -414,7 +426,7 @@ en: {
   eyebrow:"Women only · San Salvador, Santa Ana and La Libertad",
   h1:"Making friends as an adult <em>isn't easy.</em>",
   lede:"So we put together relaxed meetups in small groups, to meet new people without the pressure: a matcha, an afternoon at the beach, a ceramics class. <b>Most women come on their own.</b>",
-  chip1:"Daytime plans", chip2:"Women only", chip3:"Groups of 10 to 14", chip4:"$5 to save your spot",
+  chip1:"Daytime plans", chip2:"Women only", chip3:"Groups of 10 to 14", chip4:"Confirmed once 5 sign up",
   sticker:"Only 10–14 spots per meetup", cardEyebrow:"Upcoming meetups", cardTitle:"Save your spot",
   cardSub:"Pick a meetup and we'll message you on WhatsApp with the group and the location.",
   lblName:"What's your name?", phName:"e.g. Sofía Gómez", lblPhone:"Your WhatsApp", lblMeetup:"Which meetup do you want to join?",
@@ -428,27 +440,31 @@ en: {
   p3t:"Small groups", p3:"14 people max per meetup, so you can actually talk to everyone. The $5 deposit makes sure that whoever says they're coming, comes.",
   howEyebrow:"Step by step", howTitle:"How it works",
   s1t:"Pick a meetup", s1:"Fill in the form with your name and WhatsApp and we give you a booking code.",
-  s2t:"Transfer $5", s2:"By Transfer365 or bank transfer, within 24 hours. Send us the receipt with your code.",
-  s3t:"Join the group", s3:"We confirm your payment and add you to that meetup's chat, with the exact location.",
-  s4t:"Show up", s4:"Everyone pays for what they order. The $5 covers the organizing and the table reservation.",
+  s2t:"Save your spot", s2:"November meetups are free. From December, you save your spot with a $5 deposit by bank transfer.",
+  s3t:"Once we're 5, it's on", s3:"We let you know on WhatsApp and add you to that meetup's group, with the exact location. If we don't reach 5, we refund your deposit or move it to another date.",
+  s4t:"Show up", s4:"Everyone pays for what they order.",
   calEyebrow:"Calendar", calText:"Spots update on their own. If a meetup fills up, you can join the waitlist.",
   faqTitle:"What everyone asks",
-  q1:"What does the $5 cover?", a1:"The organizing, the table reservation and a host who welcomes you. Whatever you order (your matcha, your coffee, the workshop materials) you pay for directly at the venue.",
+  q1:"How much does it cost?", a1:"November meetups are free. From December, saving your spot costs $5, which covers the organizing, the table reservation and a host who welcomes you. Whatever you order (your matcha, your coffee, the workshop materials) you pay for directly at the venue.",
   q2:"What if I can't make it?", a2:"Let us know on WhatsApp at least 48 hours ahead and we'll move your $5 to another date. With less notice it isn't refunded, because the spot was held for you.",
   q3:"Do I need to bring someone?", a3:"No. Almost everyone comes alone, that's the idea. If you want to bring a friend, she should book her own spot.",
   q4:"How long does a meetup last?", a4:"2 to 3 hours. You can leave whenever you like.",
   q5:"How do I know it's safe?", a5:"Meetups are in well-known public places, during the day or at sunset. The exact location is only shared with women who confirmed their payment, and the community is women only.",
   q6:"How old are the women who come?", a6:"It's for women 18 and over. Most are between 22 and 38.",
+  q8:"What if fewer than 5 sign up?", a8:"The meetup doesn't happen. We let you know on WhatsApp a few days before and refund your deposit or move it to another date, whichever you prefer.",
   q7:"Can I come if I don't speak Spanish?", a7:"Yes. Many of us speak English. Book in English and we'll seat you next to someone who speaks it.",
   footLine:"Meetups for women only · San Salvador, Santa Ana and La Libertad", footWa:"Message us on WhatsApp",
   langBtn:"ES", langAria:"Ver en español", langCode:"es",
   copied:"Copied", holdToCopy:"Press and hold to copy",
   waHello:"Hi! I'd like to know more about Girls& El Salvador 💕",
   loadErr:"We couldn't load the dates. Reload the page in a moment.",
+  toGo:n=>n===1?"1 more to confirm it":`${n} more to confirm it`, joined:(c,m)=>`${c} of ${m} signed up`, confirmed:"Confirmed", freeTag:"Free", depositTag:p=>`$${p} deposit`,
+  noteFree:"This meetup is free. Just save your spot and we'll message you on WhatsApp once at least 5 sign up.", notePaid:"The $5 is paid by bank transfer after you book. If we don't reach 5, we refund it or move it to another date.", badgeFree:"Free",
+  freeReady:"This meetup is free. Once at least 5 sign up, we'll message you on WhatsApp to confirm it and send the location.", freeBadge:"Spot saved", msgFree:(n,t,d,c)=>`Hi! I'm ${n}. I signed up for ${t} (${d}). My code is ${c}.`, refundNote:"If we don't reach 5, we refund the $5 or move it to another date.",
   full:"Full · waitlist", last:"Last spot!", few:n=>`Only ${n} spots left`, free:(n,c)=>`${n} of ${c} spots open`,
   empty:"We're planning the next dates. Sign up with the form and you'll hear first.",
   reserve:"Book", waitlist:"Join waitlist", waitTag:" (waitlist)", pickDate:"Pick a date…", noDate:"None of these dates work, tell me about the next ones",
-  banner:(t,z,d,few)=>`Next meetup: <b>${t} in ${z}</b>, ${d}${few?` · only ${few} spots left`:''}`, bannerCta:"Book →",
+  banner:(t,z,d,few,free)=>`Next meetup${free?" (free)":""}: <b>${t} in ${z}</b>, ${d}${few?` · only ${few} spots left`:''}`, bannerCta:"Book →",
   errName:"Add your name so we know what to call you.", errPhone:"Check your WhatsApp: Salvadoran numbers are 8 digits and start with 6 or 7.", errPhoneIntl:"Check the country code and your WhatsApp number.", ccAria:"Country code", errMeetup:"Pick which meetup you want to join.",
   sending:"Booking…", errClosed:"That meetup is closed. Pick another date.", errMany:"You've already made several bookings today with this number. Message us on WhatsApp and we'll help.",
   errWa:"Check your WhatsApp number.", errNet:"Your booking couldn't be saved. Check your connection and try again.",
@@ -493,7 +509,7 @@ function applyLang(){
   document.querySelectorAll("[data-i18n-aria]").forEach(el => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
   const b = $("#lang"); b.textContent = t("langBtn"); b.setAttribute("aria-label", t("langAria")); b.lang = t("langCode");
   if (waNumber) $("#foot-wa").href = waLink(t("waHello"));
-  renderList(); fillSelect(); renderBanner();
+  renderList(); fillSelect(); renderBanner(); syncPrice();
   if (lastDone && !$("#done").hidden) renderDone(lastDone.d, lastDone.name);
 }
 $("#lang").addEventListener("click", () => {
@@ -529,6 +545,13 @@ function spotsLabel(m){
   return ['', t("free")(m.spots_left, m.capacity)];
 }
 
+function footStatus(m, cls, txt){
+  const min = m.min_people || 5, got = m.confirmed_count || 0;
+  if (m.spots_left <= 0) return `<span class="spots full">${esc(txt)}</span>`;
+  if (got < min) return `<span class="spots"><span>${esc(t("toGo")(min - got))}</span><span class="prog" role="img" aria-label="${esc(t("joined")(got, min))}"><i style="width:${Math.round(got / min * 100)}%"></i></span><small>${esc(t("joined")(got, min))}</small></span>`;
+  return `<span class="spots ok"><span>✓ ${t("confirmed")}</span><small class="${cls}">${esc(txt)}</small></span>`;
+}
+
 function renderList(){
   if (!loaded) return;
   if (!meetups.length){ $("#list").innerHTML = `<p class="empty">${t("empty")}</p>`; return; }
@@ -538,9 +561,9 @@ function renderList(){
       <div class="m-top"><span class="tag t-${esc(m.theme)}">${esc(THEME[m.theme]||m.title)}</span>
         <div class="m-date"><span>${esc(fmt(m.starts_at,{month:"short"}).replace(".",""))}</span><b>${esc(fmt(m.starts_at,{day:"numeric"}))}</b></div></div>
       <div class="m-body"><h3>${esc(m.title)}</h3>
-        <div class="m-meta"><span>${esc(fmt(m.starts_at,{weekday:"long"}))} · ${esc(fmt(m.starts_at,{hour:"numeric",minute:"2-digit"}))}</span><span>${esc(m.zone)}, ${esc(m.city)}</span></div>
+        <div class="m-meta"><span>${esc(fmt(m.starts_at,{weekday:"long"}))} · ${esc(fmt(m.starts_at,{hour:"numeric",minute:"2-digit"}))}</span><span>${esc(m.zone)}, ${esc(m.city)}</span><span class="pricetag">${Number(m.price)===0 ? t("freeTag") : esc(t("depositTag")(Number(m.price).toFixed(0)))}</span></div>
         ${desc(m) ? `<p>${esc(desc(m))}</p>` : ""}</div>
-      <div class="m-foot"><span class="spots ${cls}">${esc(txt)}</span>
+      <div class="m-foot">${footStatus(m, cls, txt)}
         <button class="btn ${m.spots_left>0?'btn-primary':'btn-ghost'}" data-pick="${esc(m.id)}">${m.spots_left>0?t("reserve"):t("waitlist")}</button></div>
     </article>`;
   }).join("");
@@ -559,11 +582,19 @@ function renderBanner(){
   const next = meetups.find(m => m.spots_left > 0);
   if (!next) return;
   const b = $("#banner");
-  b.innerHTML = `${t("banner")(esc(next.title), esc(next.zone), esc(dayLong(next.starts_at)), next.spots_left<=4 ? next.spots_left : 0)} <a href="#reservar" data-pick="${esc(next.id)}">${t("bannerCta")}</a>`;
+  b.innerHTML = `${t("banner")(esc(next.title), esc(next.zone), esc(dayLong(next.starts_at)), next.spots_left<=4 ? next.spots_left : 0, Number(next.price)===0)} <a href="#reservar" data-pick="${esc(next.id)}">${t("bannerCta")}</a>`;
   b.hidden = false;
 }
 
-function syncTheme(){ $("#theme-field").hidden = $("#f-meetup").value !== "none"; }
+function syncTheme(){ $("#theme-field").hidden = $("#f-meetup").value !== "none"; syncPrice(); }
+function syncPrice(){
+  const v = $("#f-meetup").value;
+  const sel = meetups.find(m => m.id === v) || (v === "" ? meetups.find(m => m.spots_left > 0) : null);
+  const free = sel ? Number(sel.price) === 0 : v === "none";
+  $("#price-badge").textContent = free ? t("badgeFree") : "$" + Number(sel ? sel.price : 5).toFixed(0);
+  $("#price-badge").classList.toggle("is-free", free);
+  $("#note").textContent = free ? t("noteFree") : t("notePaid");
+}
 $("#f-meetup").addEventListener("change", syncTheme);
 
 document.addEventListener("click", e => {
@@ -616,7 +647,15 @@ function renderDone(d, name){
   const first = name.split(" ")[0];
   const m = d.meetup;
   let html;
-  if (d.status === "pending" || d.status === "paid"){
+  if (m && Number(m.price) === 0 && d.status !== "waitlist"){
+    const msg = t("msgFree")(name, m.title, dayLong(m.starts_at), d.code);
+    html = `<span class="ok-badge">${esc(d.duplicate ? t("dup") : t("freeBadge"))}</span>
+      <h2 style="font-size:28px;margin-top:14px">${esc(t("ready")(first))}</h2>
+      <p class="sub" style="margin-bottom:0">${esc(m.title)} · ${esc(longDate(m.starts_at))} · ${esc(m.zone)}, ${esc(m.city)}</p>
+      <div class="code">${esc(d.code)}</div><p class="fine" style="text-align:left;margin:0 0 14px">${t("yourCode")}</p>
+      <p class="sub">${esc(t("freeReady"))}</p>
+      <a class="btn btn-wa" href="${esc(waLink(msg))}" target="_blank" rel="noopener">${t("writeUs")}</a>`;
+  } else if (d.status === "pending" || d.status === "paid"){
     const price = Number(m.price);
     const msg = t("msgPaid")(name, m.title, dayLong(m.starts_at), d.code, price.toFixed(0));
     const acct = ACCT[LANG][d.pay.type] || d.pay.type;
@@ -631,7 +670,7 @@ function renderDone(d, name){
         <div><dt>${t("account")} (${esc(acct)})</dt><dd>${esc(d.pay.number)} <button type="button" class="copy" data-copy="${esc(d.pay.number)}">${t("copy")}</button></dd></div>
         <div><dt>${t("ref")}</dt><dd>${esc(d.code)} <button type="button" class="copy" data-copy="${esc(d.code)}">${t("copy")}</button></dd></div>
       </dl>
-      <ol class="steps-mini"><li>${esc(t("payInstr") || d.pay.instructions)}</li><li>${t("stepRef")}</li><li>${t("stepGroup")}</li></ol>
+      <ol class="steps-mini"><li>${esc(t("payInstr") || d.pay.instructions)}</li><li>${t("stepRef")}</li><li>${t("stepGroup")}</li><li>${t("refundNote")}</li></ol>
       <a class="btn btn-wa" href="${esc(waLink(msg))}" target="_blank" rel="noopener">${t("sendProof")}</a>
       <p class="fine">${esc(t("noWa")(prettyWa()))}</p>`;
   } else {
