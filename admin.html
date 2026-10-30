@@ -95,6 +95,33 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
 .mrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
 .mrow .grow{flex:1;min-width:200px}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--espresso);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;z-index:50}
+
+/* calendar tab */
+.weeks{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+.weeks button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.weeks button small{color:var(--muted);font-size:12px}
+.weeks button[aria-selected="true"]{background:var(--espresso);color:#fff;border-color:var(--espresso)}
+.weeks button[aria-selected="true"] small{color:#fff;opacity:.75}
+.weeks button .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rose);margin-left:6px;vertical-align:1px}
+.cstats{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-bottom:12px}
+.cstats b{color:var(--espresso);font-variant-numeric:tabular-nums}
+.clist{display:grid;gap:10px}
+.ev{background:var(--surface);border:1px solid var(--line);border-radius:14px;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;padding:14px 16px;align-items:start}
+.ev.alert{border-color:var(--terracotta);box-shadow:0 0 0 1px var(--terracotta)}
+.ev.draft{background:#FCFAF9;border-style:dashed}
+.ev .dt{text-align:center;line-height:1.1}
+.ev .dt span{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ev .dt b{display:block;font:700 28px/1.05 var(--display)}
+.ev h3{font-size:19px}
+.ev .meta{font-size:13px;color:var(--muted);margin-top:3px}
+.ev .todo{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ev .todo span{font-size:12px;border-radius:8px;padding:3px 8px;background:#F3EEEB}
+.ev .todo span.warn{background:#F8E1DA;color:var(--terracotta);font-weight:600}
+.ev .todo span.ok{background:#E4ECD9;color:var(--matcha-ink)}
+.ev .side{display:grid;gap:6px;justify-items:end}
+.ev .meter{width:120px}
+.ev .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:640px){.ev{grid-template-columns:52px minmax(0,1fr)}.ev .side{grid-column:1/-1;justify-items:start;grid-auto-flow:column;justify-content:start;align-items:center}}
 </style>
 </head>
 <body>
@@ -113,12 +140,20 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
 
   <div id="app" hidden>
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" data-tab="res" aria-selected="true">Reservas</button>
+      <button class="tab" role="tab" data-tab="cal" aria-selected="true">Calendario</button>
+      <button class="tab" role="tab" data-tab="res" aria-selected="false">Reservas</button>
       <button class="tab" role="tab" data-tab="meet" aria-selected="false">Meetups</button>
       <button class="tab" role="tab" data-tab="set" aria-selected="false">Pagos y WhatsApp</button>
     </div>
 
-    <section id="tab-res">
+    <section id="tab-cal">
+      <nav class="weeks" id="c-weeks" role="tablist" aria-label="Semanas"></nav>
+      <div class="cstats" id="c-stats"></div>
+      <div class="clist" id="c-list"><p class="empty">Cargando…</p></div>
+      <p class="small" style="margin-top:14px">Todo lo que está "Abierta" aparece en el sitio al instante. Los borradores solo los ves vos.</p>
+    </section>
+
+    <section id="tab-res" hidden>
       <div class="bar">
         <label class="f grow">Salida<select class="input" id="r-meetup"></select></label>
         <label class="f">Mostrar<select class="input" id="r-filter"><option value="active">Activas</option><option value="all">Todas</option></select></label>
@@ -203,7 +238,7 @@ async function boot(){
   if (!ok){ $("#login").hidden = false; $("#l-msg").textContent = "Este correo no tiene acceso al panel."; await sb.auth.signOut(); return; }
   $("#login").hidden = true; $("#app").hidden = false; $("#logout").hidden = false; $("#who").textContent = session.user.email;
   await Promise.all([loadMeetups(), loadSettings()]);
-  await loadRows();
+  await Promise.all([loadRows(), loadCalendar()]);
 }
 $("#login").addEventListener("submit", async e => {
   e.preventDefault(); $("#l-msg").className="msg"; $("#l-msg").textContent="";
@@ -224,8 +259,9 @@ $("#logout").addEventListener("click", async () => { await sb.auth.signOut(); bo
 /* ---------- tabs ---------- */
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
-  ["res","meet","set"].forEach(n => $("#tab-"+n).hidden = n !== t.dataset.tab);
+  ["cal","res","meet","set"].forEach(n => $("#tab-"+n).hidden = n !== t.dataset.tab);
   if (t.dataset.tab === "res") loadRows();
+  if (t.dataset.tab === "cal") loadCalendar();
 }));
 
 /* ---------- data ---------- */
@@ -375,7 +411,86 @@ $("#mform").addEventListener("submit", async e => {
   const id = $("#m-id").value;
   const { error } = id ? await sb.from("meetups").update(rec).eq("id", id) : await sb.from("meetups").insert(rec);
   if (error) return toast("No se pudo guardar: " + error.message);
-  toast("Salida guardada"); $("#m-new").click(); loadMeetups();
+  toast("Salida guardada"); $("#m-new").click(); await loadMeetups(); loadCalendar();
+});
+
+/* ---------- calendar ---------- */
+let calCounts = {}, calWeek = null;
+const DAYMS = 864e5;
+const svDate = iso => new Date(new Date(iso).getTime() - 6*3600e3).toISOString().slice(0,10); // El Salvador = UTC-6
+const mondayOf = ymd => { const d = new Date(ymd + "T12:00:00Z"); const wd = (d.getUTCDay() + 6) % 7; return new Date(d.getTime() - wd*DAYMS).toISOString().slice(0,10); };
+const addDays = (ymd, n) => new Date(new Date(ymd + "T12:00:00Z").getTime() + n*DAYMS).toISOString().slice(0,10);
+const dShort = ymd => new Intl.DateTimeFormat("es-SV",{timeZone:"UTC",day:"numeric",month:"short"}).format(new Date(ymd+"T12:00:00Z")).replace(".","");
+async function loadCalendar(){
+  const { data } = await sb.from("reservations").select("meetup_id,status");
+  calCounts = {};
+  (data||[]).forEach(r => { if (!r.meetup_id) return; const c = calCounts[r.meetup_id] ||= {paid:0,pend:0,wait:0}; if (r.status==="paid"||r.status==="attended") c.paid++; else if (r.status==="pending") c.pend++; else if (r.status==="waitlist") c.wait++; });
+  renderCalendar();
+}
+function renderCalendar(){
+  const today = svDate(new Date().toISOString());
+  const thisMon = mondayOf(today);
+  const evs = meetups.filter(m => m.status !== "cancelled").map(m => ({...m, day: svDate(m.starts_at)}));
+  const lastMon = evs.reduce((a,m) => m.day > a ? mondayOf(m.day) : a, addDays(thisMon, 35));
+  const weeks = []; for (let w = thisMon; w <= lastMon; w = addDays(w, 7)) weeks.push(w);
+  if (!calWeek || !weeks.includes(calWeek)) calWeek = (weeks.find(w => evs.some(m => m.day >= w && m.day <= addDays(w,6) && m.day >= today)) || thisMon);
+  $("#c-weeks").innerHTML = weeks.map((w,i) => {
+    const has = evs.some(m => m.day >= w && m.day <= addDays(w,6));
+    return `<button role="tab" aria-selected="${w===calWeek}" data-week="${w}"><span>${i===0?"Esta semana":"Semana del "+dShort(w)}${has?'<span class="dot" aria-label="tiene salidas"></span>':""}</span><small>${dShort(w)} – ${dShort(addDays(w,6))}</small></button>`;
+  }).join("");
+  const inWeek = evs.filter(m => m.day >= calWeek && m.day <= addDays(calWeek,6)).sort((a,b) => a.starts_at.localeCompare(b.starts_at));
+  const upcoming = evs.filter(m => m.day >= today);
+  const alerts = upcoming.filter(m => calState(m, today).alert).length;
+  $("#c-stats").innerHTML = `<span><b>${upcoming.filter(m=>m.status==="open").length}</b> publicadas</span><span><b>${upcoming.filter(m=>m.status==="draft").length}</b> en borrador</span><span><b>${upcoming.filter(m=>calState(m,today).met).length}</b> ya se hacen</span>${alerts?`<span style="color:var(--terracotta)"><b style="color:inherit">${alerts}</b> necesitan algo</span>`:""}`;
+  $("#c-list").innerHTML = inWeek.length ? inWeek.map(m => calCard(m, today)).join("") : `<p class="empty">No hay salidas esta semana. Creá una en Meetups o contámela en el chat con Claude.</p>`;
+}
+function calState(m, today){
+  const c = calCounts[m.id] || {paid:0,pend:0,wait:0}, min = m.min_people || 5;
+  const met = c.paid >= min, deadline = addDays(m.day, -3), past = m.day < today;
+  const todo = [];
+  if (m.status === "draft") todo.push(["warn","Borrador: no se ve en el sitio"]);
+  if (!m.venue_private && !past) todo.push(["warn","Falta el lugar exacto"]);
+  if (m.status === "open" && !past){
+    if (met) todo.push(["ok","✓ Se hace: mandá las confirmaciones"]);
+    else if (today >= deadline) todo.push(["warn",`Hoy toca decidir: van ${c.paid} de ${min}`]);
+    else todo.push(["",`Revisar el mínimo el ${dShort(deadline)}`]);
+  }
+  if (Number(m.price) > 0 && c.pend) todo.push(["",`${c.pend} pendiente${c.pend>1?"s":""} de pago`]);
+  if (c.wait) todo.push(["",`${c.wait} en lista de espera`]);
+  if (past && m.status !== "done") todo.push(["","Ya pasó: marcala como Realizada"]);
+  const alert = !past && (m.status === "draft" || !m.venue_private || (m.status==="open" && !met && today >= deadline));
+  return { c, min, met, todo, alert, past };
+}
+function calCard(m, today){
+  const st = calState(m, today);
+  const pill = m.status === "draft" ? '<span class="pill s-cancelled">Borrador</span>' : st.past ? '<span class="pill s-attended">Pasada</span>' : st.met ? '<span class="pill s-paid">Se hace</span>' : '<span class="pill s-pending">Abierta</span>';
+  const pct = Math.min(st.c.paid / st.min * 100, 100);
+  return `<article class="ev${st.alert?" alert":""}${m.status==="draft"?" draft":""}">
+    <div class="dt"><span>${esc(fmt(m.starts_at,{weekday:"short"}).replace(".",""))}</span><b>${esc(fmt(m.starts_at,{day:"numeric"}))}</b><span>${esc(fmt(m.starts_at,{month:"short"}).replace(".",""))}</span></div>
+    <div style="min-width:0"><h3>${esc(m.title)}</h3>
+      <div class="meta">${esc(fmt(m.starts_at,{hour:"numeric",minute:"2-digit"}))} · ${esc(m.zone)}, ${esc(m.city)} · ${Number(m.price)===0?"Gratis":"$"+Number(m.price).toFixed(0)+" de depósito"} · ${m.capacity} cupos</div>
+      <div class="todo">${st.todo.map(([k,t]) => `<span class="${k}">${esc(t)}</span>`).join("")}</div></div>
+    <div class="side">${pill}
+      <div class="small">${st.c.paid} de ${st.min} para el mínimo</div>
+      <div class="meter"><i style="width:${pct}%;background:${st.met?"var(--matcha-ink)":"#E8C873"}"></i></div>
+      <div class="acts">${m.status==="draft"?`<button class="btn btn-sm btn-primary" data-cal="publish" data-id="${m.id}">Publicar</button>`:""}<button class="btn btn-sm" data-cal="rows" data-id="${m.id}">Reservas</button><button class="btn btn-sm" data-cal="edit" data-id="${m.id}">Editar</button></div>
+    </div></article>`;
+}
+$("#c-weeks").addEventListener("click", e => { const b = e.target.closest("[data-week]"); if (!b) return; calWeek = b.dataset.week; renderCalendar(); });
+$("#c-list").addEventListener("click", async e => {
+  const b = e.target.closest("[data-cal]"); if (!b) return;
+  const id = b.dataset.id, act = b.dataset.cal;
+  const goTab = n => document.querySelector(`.tab[data-tab="${n}"]`).click();
+  if (act === "rows"){ $("#r-meetup").value = id; goTab("res"); }
+  if (act === "edit"){ goTab("meet"); const eb = document.querySelector(`#mlist [data-edit="${id}"]`); if (eb) eb.click(); }
+  if (act === "publish"){
+    const m = meetups.find(x => x.id === id);
+    if (!m.venue_private && b.dataset.confirm !== "1"){ b.dataset.confirm = "1"; b.textContent = "¿Publicar sin lugar? Tocá de nuevo"; return; }
+    b.disabled = true;
+    const { error } = await sb.from("meetups").update({ status: "open" }).eq("id", id);
+    if (error){ b.disabled = false; return toast("No se pudo publicar"); }
+    toast("Publicada: ya se ve en el sitio"); await loadMeetups(); loadCalendar();
+  }
 });
 
 /* ---------- settings ---------- */
