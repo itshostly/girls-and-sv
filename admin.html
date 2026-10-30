@@ -149,6 +149,7 @@ td .acts{display:flex;gap:6px;flex-wrap:wrap}
         </div>
         <label class="f">Lugar exacto (privado: solo va en el mensaje de confirmación)<input class="input" id="m-venue" placeholder="Café X, Calle La Reforma #123 — mesa larga a nombre de Girls&"></label>
         <label class="f">Descripción (pública)<textarea class="input" id="m-desc" rows="2"></textarea></label>
+        <label class="f">Descripción en inglés (opcional)<textarea class="input" id="m-desc-en" rows="2"></textarea></label>
         <div class="grid3">
           <label class="f">Cupos<input class="input" id="m-cap" type="number" min="1" max="60" value="12" required></label>
           <label class="f">Reserva ($)<input class="input" id="m-price" type="number" min="0" step="0.5" value="5" required></label>
@@ -287,7 +288,7 @@ function render(){
     if (["cancelled","no_show","attended"].includes(r.status)) acts.push(`<button class="btn btn-sm" data-act="${m?'pending':'waitlist'}" data-id="${r.id}">Reactivar</button>`);
     return `<tr>
       <td class="code">${esc(r.code)}</td>
-      <td><b>${esc(r.name)}</b>${r.theme_pref?`<div class="small">Prefiere: ${esc(r.theme_pref)}</div>`:""}${r.notes?`<div class="small">${esc(r.notes)}</div>`:""}</td>
+      <td><b>${esc(r.name)}</b>${r.lang==="en"?` <span class="pill s-waitlist" title="Reservó en inglés">EN</span>`:""}${r.theme_pref?`<div class="small">Prefiere: ${esc(r.theme_pref)}</div>`:""}${r.notes?`<div class="small">${esc(r.notes)}</div>`:""}</td>
       <td style="white-space:nowrap"><a href="${esc(wa(r.whatsapp,""))}" target="_blank" rel="noopener">${esc(prettyPhone(r.whatsapp))}</a></td>
       <td><span class="pill s-${r.status}">${LABEL[r.status]}</span>${late?`<div class="late">Venció el plazo</div>`:""}</td>
       <td class="small" style="white-space:nowrap">${esc(fmt(r.created_at,{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}))}</td>
@@ -295,7 +296,22 @@ function render(){
   }).join("");
 }
 
+function waMessagesEn(r, m, first){
+  const site = location.origin + location.pathname.replace(/admin\.html$/,"") + "?lang=en";
+  if (!m) return { newDates: `Hi ${first}! 💕 It's Girls& El Salvador. New dates are open: ${site}#meetups Want us to save you a spot?` };
+  const d = new Intl.DateTimeFormat("en-US",{timeZone:TZ,weekday:"long",month:"long",day:"numeric"}).format(new Date(m.starts_at)) + " at " + new Intl.DateTimeFormat("en-US",{timeZone:TZ,hour:"numeric",minute:"2-digit"}).format(new Date(m.starts_at));
+  const acct = settings.account_type === "Corriente" ? "checking" : "savings";
+  const pay = `${settings.bank_name}, ${acct} account ${settings.account_number}, holder ${settings.account_holder}`;
+  return {
+    remind: `Hi ${first}! 💕 This is Girls& about your booking for ${m.title} (${d}). Your code is ${r.code}. To confirm your spot, just send the $${Number(m.price).toFixed(0)} transfer: ${pay}. Send me the receipt here and you're all set.`,
+    confirm: `${first}, your spot is confirmed! ✨\n\n${m.title}\n📅 ${d}\n📍 ${m.venue_private || m.zone + ", " + m.city}\n\nCome 10 minutes early and ask for the Girls& table. Everyone pays for what they order. If you can't make it, let me know 48 hours ahead and we'll move your $5 to another date. See you there! 💕`,
+    dayBefore: `Hi ${first}! ${m.title} is tomorrow 💕\n📅 ${d}\n📍 ${m.venue_private || m.zone}\nSee you there. If you can't make it after all, let me know today so I can give your spot to someone on the waitlist.`,
+    spot: `Hi ${first}! 💕 A spot opened up for ${m.title} (${d}). Want it? If so, transfer $${Number(m.price).toFixed(0)} to ${pay} with your code ${r.code} and send me the receipt. I'll hold it for 24 hours.`
+  };
+}
+
 function waMessages(r, m, first){
+  if (r.lang === "en") return waMessagesEn(r, m, first);
   if (!m) return { newDates: `¡Hola ${first}! 💕 Soy de Girls& El Salvador. Ya abrimos nuevas fechas: ${location.origin}${location.pathname.replace(/admin\.html$/,"")}#meetups ¿Te apartamos un lugar?` };
   const d = when(m.starts_at);
   return {
@@ -340,7 +356,7 @@ $("#mlist").addEventListener("click", e => {
   const m = meetups.find(x => x.id === b.dataset.edit);
   $("#mform-h").textContent = "Editar " + m.title;
   $("#m-id").value = m.id; $("#m-title").value = m.title; $("#m-theme").value = m.theme; $("#m-city").value = m.city; $("#m-zone").value = m.zone;
-  $("#m-start").value = toLocalInput(m.starts_at); $("#m-venue").value = m.venue_private || ""; $("#m-desc").value = m.description || "";
+  $("#m-start").value = toLocalInput(m.starts_at); $("#m-venue").value = m.venue_private || ""; $("#m-desc").value = m.description || ""; $("#m-desc-en").value = m.description_en || "";
   $("#m-cap").value = m.capacity; $("#m-price").value = m.price; $("#m-status").value = m.status;
   $("#mform").scrollIntoView({ behavior:"smooth" });
 });
@@ -348,7 +364,7 @@ $("#m-new").addEventListener("click", () => { $("#mform").reset(); $("#m-id").va
 $("#mform").addEventListener("submit", async e => {
   e.preventDefault();
   const rec = { title: $("#m-title").value.trim(), theme: $("#m-theme").value, city: $("#m-city").value, zone: $("#m-zone").value.trim(),
-    starts_at: $("#m-start").value + ":00-06:00", venue_private: $("#m-venue").value.trim() || null, description: $("#m-desc").value.trim() || null,
+    starts_at: $("#m-start").value + ":00-06:00", venue_private: $("#m-venue").value.trim() || null, description: $("#m-desc").value.trim() || null, description_en: $("#m-desc-en").value.trim() || null,
     capacity: +$("#m-cap").value, price: +$("#m-price").value, status: $("#m-status").value };
   const id = $("#m-id").value;
   const { error } = id ? await sb.from("meetups").update(rec).eq("id", id) : await sb.from("meetups").insert(rec);
